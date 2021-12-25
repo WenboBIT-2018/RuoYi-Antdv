@@ -5,7 +5,7 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.png" class="logo" alt="logo">
-            <span class="title">RuoYi-Antdv</span>
+            <span class="title">ia-frame</span>
           </a>
         </div>
         <div class="desc">
@@ -17,12 +17,12 @@
 
       <div class="footer">
         <div class="links">
-          <a href="https://github.com/fuzui/RuoYi-Antdv" target="_blank">帮助</a>
-          <a href="https://github.com/fuzui/RuoYi-Antdv" target="_blank">隐私</a>
-          <a href="https://github.com/fuzui/RuoYi-Antdv" target="_blank">条款</a>
+          <a href="https://github.com/WenboBIT-2018/RuoYi-Antdv" target="_blank">帮助</a>
+          <a href="https://github.com/WenboBIT-2018/RuoYi-Antdv" target="_blank">隐私</a>
+          <a href="https://github.com/WenboBIT-2018/RuoYi-Antdv" target="_blank">条款</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2021 <a href="https://github.com/fuzui/RuoYi-Antdv" target="_blank">RuoYi-Antdv</a>
+          Copyright &copy; 2021 NorthWind96
         </div>
       </div>
     </div>
