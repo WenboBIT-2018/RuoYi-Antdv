@@ -10,6 +10,8 @@ const components = {
 
 export default {
   'message': '-',
+  'user.login.tab-login-credentials': '账号密码登录',
+  'user.login.tab-cas': '统一身份认证登录',
 
   ...components,
   ...setting

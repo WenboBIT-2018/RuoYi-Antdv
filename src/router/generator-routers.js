@@ -27,7 +27,9 @@ const constantRouterComponents = {
   // 公告新增修改
   'NoticeForm': () => import('@/views/system/notice/CreateForm'),
   // 修改生成配置
-  'GenEdit': () => import('@/views/tool/gen/modules/GenEdit')
+  'GenEdit': () => import('@/views/tool/gen/modules/GenEdit'),
+  // CAS 认证后默认重定向到的地址
+  'CasRedirect': () => import('@/views/user/CasRedirect')
 }
 
 // 前端未找到页面路由（固定不用改）

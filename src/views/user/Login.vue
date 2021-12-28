@@ -1,58 +1,76 @@
 <template>
   <div class="main">
     <a-form-model id="formLogin" ref="form" class="user-layout-login" :model="form" :rules="rules">
-      <a-alert
-        v-if="isLoginError"
-        type="error"
-        showIcon
-        style="margin-bottom: 24px;"
-        :message="loginErrorInfo"
-        closable
-        :after-close="handleCloseLoginError"
-      />
-      <a-form-model-item prop="username">
-        <a-input v-model="form.username" size="large" placeholder="账户: admin" >
-          <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-        </a-input>
-      </a-form-model-item>
-      <a-form-model-item prop="password">
-        <a-input-password v-model="form.password" size="large" placeholder="密码: admin123">
-          <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-        </a-input-password>
-      </a-form-model-item>
-      <a-row :gutter="16" v-if="captchaOnOff">
-        <a-col class="gutter-row" :span="16">
-          <a-form-model-item prop="code">
-            <a-input v-model="form.code" size="large" type="text" autocomplete="off" placeholder="验证码">
-              <a-icon slot="prefix" type="security-scan" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+      <a-tabs
+        :activeKey="customActiveKey"
+        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
+        @change="handleTabClick"
+      >
+        <a-tab-pane key="tab1" :tab="$t('user.login.tab-login-credentials')">
+          <a-alert
+            v-if="isLoginError"
+            type="error"
+            showIcon
+            style="margin-bottom: 24px;"
+            :message="loginErrorInfo"
+            closable
+            :after-close="handleCloseLoginError"
+          />
+          <a-form-model-item prop="username">
+            <a-input v-model="form.username" size="large" placeholder="账户: admin" >
+              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-model-item>
-        </a-col>
-        <a-col class="gutter-row" :span="8">
-          <img class="getCaptcha" :src="codeUrl" @click="getCode">
-        </a-col>
-      </a-row>
-      <a-form-model-item prop="rememberMe">
-        <a-checkbox :checked="form.rememberMe" @change="rememberMe">记住密码</a-checkbox>
-      </a-form-model-item>
-      <a-form-item style="margin-top:24px">
-        <a-button
-          size="large"
-          type="primary"
-          htmlType="submit"
-          class="login-button"
-          :loading="logining"
-          :disabled="logining"
-          @click="handleSubmit"
-        >确定</a-button>
-      </a-form-item>
-      <div class="user-login-other">
-        <!--
-          ruoyi后台不支持获取是否开启账户.
-          故此处不做隐藏处理. 在ruoyi原前端中是在注册页面定义一个属性手动修改处理.
-        -->
-        <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
-      </div>
+          <a-form-model-item prop="password">
+            <a-input-password v-model="form.password" size="large" placeholder="密码: admin123">
+              <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+            </a-input-password>
+          </a-form-model-item>
+          <a-row :gutter="16" v-if="captchaOnOff">
+            <a-col class="gutter-row" :span="16">
+              <a-form-model-item prop="code">
+                <a-input v-model="form.code" size="large" type="text" autocomplete="off" placeholder="验证码">
+                  <a-icon slot="prefix" type="security-scan" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+                </a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col class="gutter-row" :span="8">
+              <img class="getCaptcha" :src="codeUrl" @click="getCode">
+            </a-col>
+          </a-row>
+          <a-form-model-item prop="rememberMe">
+            <a-checkbox :checked="form.rememberMe" @change="rememberMe">记住密码</a-checkbox>
+          </a-form-model-item>
+          <a-form-item style="margin-top:24px">
+            <a-button
+              size="large"
+              type="primary"
+              htmlType="submit"
+              class="login-button"
+              :loading="logining"
+              :disabled="logining"
+              @click="handleSubmit"
+            >确定</a-button>
+          </a-form-item>
+          <div class="user-login-other">
+            <!--
+              ruoyi后台不支持获取是否开启账户.
+              故此处不做隐藏处理. 在ruoyi原前端中是在注册页面定义一个属性手动修改处理.
+            -->
+            <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="tab2" :tab="$t('user.login.tab-cas')">
+          <a-button
+            size="large"
+            type="primary"
+            class="login-button"
+            @click="handleCasLogin"
+            style="margin-top: 48px"
+          >登录
+          </a-button>
+        </a-tab-pane>
+      </a-tabs>
     </a-form-model>
   </div>
 </template>
@@ -63,12 +81,14 @@ import { timeFix } from '@/utils/util'
 import { getCodeImg } from '@/api/login'
 import { LOGIN_USERNAME, LOGIN_PASSWORD, LOGIN_REMEMBERME } from '@/store/mutation-types'
 import storage from 'store'
+import { casLogin } from '@/utils/casLogin'
 
 export default {
   components: {
   },
   data () {
     return {
+      customActiveKey: 'tab1',
       codeUrl: '',
       isLoginError: false,
       loginErrorInfo: '',
@@ -93,6 +113,9 @@ export default {
     this.getCode()
   },
   methods: {
+    handleTabClick (key) {
+      this.customActiveKey = key
+    },
     getCode () {
       getCodeImg().then(res => {
         this.captchaOnOff = res.captchaOnOff === undefined ? true : res.captchaOnOff
@@ -166,6 +189,9 @@ export default {
     handleCloseLoginError () {
       this.isLoginError = false
       this.loginErrorInfo = ''
+    },
+    handleCasLogin () {
+      casLogin()
     }
   }
 }

@@ -10,6 +10,8 @@ const components = {
 
 export default {
   'message': '-',
+  'user.login.tab-login-credentials': 'Username&Password',
+  'user.login.tab-cas': 'CAS',
 
   ...components,
   ...setting
